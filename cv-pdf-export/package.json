@@ -1,0 +1,15 @@
+{
+  "name": "cv-pdf-export",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Playwright-based PDF export for CV-HTML.html",
+  "scripts": {
+    "install:pw": "npx --yes playwright install --with-deps chromium",
+    "pdf": "node export-pdf.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.46.0",
+    "serve-handler": "^6.1.5"
+  }
+}

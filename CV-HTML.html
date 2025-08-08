@@ -1,0 +1,796 @@
+<!-- 
+cd cv-pdf-export
+npm run pdf
+ver el pdf en cv-pdf-export/output/Juan-Jose-Barrera-Linde.pdf
+-->
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV - Juan José Barrera Linde</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.4;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: white;
+        /* Suavizado tipográfico para evitar que la letra 'l' se vea más gruesa */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-variant-ligatures: none;
+        font-feature-settings: "liga" 0, "clig" 0;
+      }
+
+      .download-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #2c3e50;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        z-index: 1000;
+      }
+
+      .download-btn:hover {
+        background: #34495e;
+      }
+
+      .cv-container {
+        background: white;
+        padding: 0;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #2c3e50;
+        padding-bottom: 20px;
+      }
+
+      .name {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .title {
+        font-size: 16px;
+        color: #34495e;
+        margin-bottom: 18px;
+        font-weight: 500;
+      }
+
+      .contact-info {
+        /* Dos columnas en escritorio para mejor lectura */
+        display: grid;
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+        column-gap: 24px;
+        row-gap: 8px;
+        justify-content: center;
+        font-size: 14px;
+      }
+
+      .contact-item {
+        color: #555;
+      }
+
+      /* Enlaces clicables conservando estilo */
+      .contact-item a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px dotted #999;
+      }
+      .contact-item a:hover {
+        text-decoration: underline;
+      }
+
+      .section {
+        margin-bottom: 25px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #2c3e50;
+        border-bottom: 1px solid #bdc3c7;
+        padding-bottom: 6px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .job,
+      .project {
+        margin-bottom: 20px;
+        page-break-inside: avoid;
+      }
+
+      .job-title,
+      .project-title {
+        font-weight: bold;
+        font-size: 16px;
+        color: #2c3e50;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+      }
+
+      .company-info,
+      .project-subtitle {
+        font-size: 14px;
+        color: #7f8c8d;
+        margin-bottom: 10px;
+        font-style: italic;
+      }
+
+      .job-description {
+        margin-left: 0;
+        padding-left: 0;
+      }
+
+      .job-description li {
+        margin-bottom: 6px;
+        font-size: 13px; /* antes 12px */
+        line-height: 1.55; /* antes 1.4 */
+        color: #444;
+        list-style-type: disc;
+        margin-left: 20px;
+      }
+
+      .job-description p.job-paragraph {
+        margin: 10px 0;
+        font-size: 13px; /* antes 14px */
+        color: #444;
+        line-height: 1.55; /* antes 1.5 */
+        text-align: justify;
+      }
+
+      .job-description .project-subtitle {
+        margin-top: 14px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .education-item {
+        margin-bottom: 15px;
+      }
+
+      .degree {
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+
+      .institution {
+        color: #7f8c8d;
+        font-style: italic;
+        font-size: 14px;
+      }
+
+      .skills-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .skill-category {
+        margin-bottom: 12px;
+      }
+
+      .skill-category strong {
+        color: #2c3e50;
+        font-size: 14px;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .skill-list {
+        color: #555;
+        font-size: 14px;
+        margin-left: 15px;
+        line-height: 1.5;
+      }
+
+      .summary {
+        font-size: 14px;
+        line-height: 1.5;
+        text-align: justify;
+        color: #555;
+        margin-bottom: 5px;
+      }
+
+      .languages,
+      .soft-skills {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #555;
+      }
+
+      .cert-item {
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #444;
+      }
+
+      .cert-item strong {
+        color: #2c3e50;
+      }
+
+      /* Estilos para impresión */
+      @media print {
+        @page {
+          margin: 0.75in;
+          size: A4;
+        }
+
+        body {
+          padding: 0;
+          font-size: 12px;
+          /* Evitar rasterización del texto para que sea seleccionable */
+          -webkit-print-color-adjust: auto;
+          print-color-adjust: economy;
+        }
+
+        .download-btn {
+          display: none !important;
+        }
+
+        .header {
+          margin-bottom: 20px;
+          padding-bottom: 15px;
+        }
+
+        .name {
+          font-size: 24px;
+        }
+
+        .title {
+          font-size: 14px;
+        }
+
+        .contact-info {
+          font-size: 11px;
+          column-gap: 16px;
+          row-gap: 6px;
+        }
+
+        .section {
+          margin-bottom: 18px;
+        }
+
+        .section-title {
+          font-size: 16px;
+          margin-bottom: 12px;
+          /* Evitar que el título quede al final de página separado del contenido */
+          break-after: avoid;
+          page-break-after: avoid;
+        }
+
+        .job,
+        .project {
+          margin-bottom: 15px;
+          /* Permitir que se dividan dentro de la página para evitar grandes huecos */
+          break-inside: auto;
+          page-break-inside: auto;
+        }
+
+        .job-title,
+        .project-title {
+          font-size: 14px;
+        }
+
+        .company-info,
+        .project-subtitle {
+          font-size: 12px;
+        }
+
+        .job-description li {
+          font-size: 12px;
+          margin-bottom: 4px;
+          break-inside: auto;
+        }
+
+        /* Nuevo: unificar descripciones en impresión */
+        .job-description p.job-paragraph {
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        .degree {
+          font-size: 14px;
+        }
+
+        .institution {
+          font-size: 12px;
+        }
+
+        .skill-category strong {
+          font-size: 12px;
+        }
+
+        .skill-list {
+          font-size: 12px;
+        }
+
+        .summary {
+          font-size: 12px;
+        }
+
+        .languages,
+        .soft-skills {
+          font-size: 12px;
+        }
+
+        .cert-item {
+          font-size: 12px;
+        }
+      }
+
+      /* Responsividad */
+      @media (max-width: 768px) {
+        body {
+          padding: 20px 15px;
+        }
+
+        .name {
+          font-size: 24px;
+        }
+
+        .contact-info {
+          /* Pila a 1 columna en móvil */
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .download-btn {
+          position: relative;
+          top: auto;
+          right: auto;
+          margin-bottom: 20px;
+          display: block;
+          width: fit-content;
+          margin-left: auto;
+          margin-right: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="download-btn" onclick="downloadPDF()">
+      📄 Descargar PDF
+    </button>
+
+    <div class="cv-container" id="cv-content">
+      <div class="header">
+        <div class="name">Juan José Barrera Linde</div>
+        <div class="title">
+          Tech Lead & Senior Full Stack Developer 
+        </div>
+        <div class="contact-info">
+          <span class="contact-item"><strong>Teléfono:</strong> +34 639 390 249</span>
+          <span class="contact-item"><strong>Email:</strong> juanjosebl2@gmail.com</span>
+          <span class="contact-item"><strong>Ubicación:</strong> Granada, España</span>
+          <span class="contact-item"><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/juan-josé-barrera-linde-832b23238">linkedin.com/in/juan-josé-barrera-linde-832b23238</a></span>
+          <span class="contact-item"><strong>GitHub:</strong> <a href="https://github.com/juanjosebl2">github.com/juanjosebl2</a></span>
+          <span class="contact-item"><strong>Portfolio:</strong> <a href="https://juan-barrera-portfolio.vercel.app">juan-barrera-portfolio.vercel.app</a></span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Resumen Profesional</h2>
+        <div class="summary">
+          Tech Lead y Desarrollador Full&nbsp;Stack con experiencia liderando y entregando productos end‑to‑end en entornos ágiles. Especializado en frontend (React, Next.js, Angular) y backend (Laravel, NestJS, Node.js), arquitectura de software, APIs REST y microservicios. Diseño e implantación de CI/CD con Docker y despliegues en cloud (AWS/Azure), con foco en calidad (testing, code review) y rendimiento. He coordinado equipos y proyectos para administración pública y pymes (SaaS de restauración), reduciendo tiempos de tramitación hasta un 60&nbsp;% y acelerando releases de semanas a horas. Experiencia adicional en analítica y trading algorítmico (Python, MQL5) y ciberseguridad. Busco aportar liderazgo técnico, entrega de valor y escalabilidad en organizaciones con cultura de producto.
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Experiencia Laboral</h2>
+
+        <!-- VERIDATA -->
+        <div class="job">
+          <div class="job-title">Tech Lead y Senior Full Stack Developer</div>
+          <div class="company-info">
+            Veridata | Ceuta, España | Febrero 2025 - Actualidad
+          </div>
+          <div class="job-description">
+            <p class="job-paragraph">
+              Liderazgo técnico de dos proyectos estratégicos, responsable de arquitectura, planificación y estándares de calidad. Gestión de un equipo de 3 desarrolladores bajo Scrum, definición de roadmaps y coordinación con negocio para asegurar entregas incrementales y medibles.
+            </p>
+
+            <p class="project-subtitle">
+              <strong>Sistema de Gestión Institucional - Ayuntamiento de Ceuta</strong>
+            </p>
+            <p class="job-paragraph">
+              Proyecto de digitalización que automatiza procesos administrativos críticos, mejorando la eficiencia del servicio público y la experiencia ciudadana.
+            </p>
+            <ul>
+              <li>
+                <strong>Stack tecnológico:</strong> Angular (frontend), PHP (backend), SQL Server — Arquitectura escalable para 50.000 ciudadanos
+              </li>
+              <li>
+                <strong>Liderazgo técnico:</strong> Planificación de sprints, code reviews, mentoría de 2 desarrolladores junior y definición de KPIs de calidad
+              </li>
+              <li>
+                <strong>Impacto:</strong> Reducción del 60&nbsp;% en tiempos de tramitación administrativa
+              </li>
+              <li>
+                <strong>Integración:</strong> APIs seguras con sistemas legacy y bases de datos distribuidas
+              </li>
+            </ul>
+
+            <p class="project-subtitle">
+              <strong>Plataforma SaaS para Restauración Digital</strong>
+            </p>
+            <p class="job-paragraph">
+              Ecosistema modular B2B para optimizar la experiencia del cliente y la eficiencia operativa mediante automatización.
+            </p>
+            <ul>
+              <li>
+                <strong>Arquitectura de servicios:</strong> Next.js + NestJS + PostgreSQL + Redis para alta concurrencia
+              </li>
+              <li>
+                <strong>Apps especializadas:</strong> 5 interfaces (cliente, camarero, cocina, gerente, admin) con roles y permisos
+              </li>
+              <li>
+                <strong>Funcionalidades clave:</strong> Pedidos QR, fidelización, reservas online, analytics, marketing automation
+              </li>
+              <li>
+                <strong>Calidad y despliegue:</strong> CI/CD con Docker, pruebas automatizadas y estrategia de releases segura
+              </li>
+              <li>
+                <strong>Escalabilidad:</strong> Arquitectura cloud‑ready preparada para cientos de establecimientos concurrentes
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- FTMO -->
+        <div class="job">
+          <div class="job-title">
+            Quantitative Developer & Algorithmic Trader
+          </div>
+          <div class="company-info">
+            FTMO y FundedNext | República Checa | Agosto 2024 - Enero 2025
+          </div>
+          <div class="job-description">
+            <p class="job-paragraph">
+              Desarrollo de sistemas de trading algorítmico de alto rendimiento gestionando cuentas fondeadas de hasta 200.000&nbsp;USD. Aplicación de técnicas de machine learning, análisis cuantitativo y gestión de riesgo para alcanzar objetivos de rentabilidad mensual.
+            </p>
+            <ul>
+              <li>
+                <strong>Desarrollo de algoritmos:</strong> Sistemas automatizados en MQL5, Python y C++ con latencia &lt; 50&nbsp;ms
+              </li>
+              <li>
+                <strong>Machine learning aplicado:</strong> LSTM para predicción de series temporales y NLP para señales de sentimiento
+              </li>
+              <li>
+                <strong>Gestión de riesgo:</strong> Algoritmos que redujeron el drawdown máximo del 15&nbsp;% al 6&nbsp;%
+              </li>
+              <li>
+                <strong>Análisis de datos:</strong> Procesamiento de más de un millón de ticks diarios en Forex, índices y materias primas
+              </li>
+              <li>
+                <strong>Backtesting:</strong> Simulaciones con datos históricos de más de 10 años y validación estadística
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- JTSEC -->
+        <div class="job">
+          <div class="job-title">Full Stack Developer & DevOps Engineer</div>
+          <div class="company-info">
+            JTSec (Consultoría Legal-Tech) | Granada, España | Junio 2022 - Septiembre 2022
+          </div>
+          <div class="job-description">
+            <p class="job-paragraph">
+              <strong>Desarrollo ágil de soluciones LegalTech</strong> para automatizar procesos jurídicos complejos. Implementación de arquitectura moderna con contenedorización y mejoras significativas en la productividad del equipo legal.
+            </p>
+            <ul>
+              <li>
+                <strong>Stack principal:</strong> Laravel + Livewire para aplicaciones jurídicas reactivas y real-time
+              </li>
+              <li>
+                <strong>DevOps:</strong> Migración completa a Docker, reduciendo tiempo de despliegue de 2h a 15 minutos
+              </li>
+              <li>
+                <strong>Refactorización crítica:</strong> Optimización de 5+ proyectos legacy, mejorando performance en 60%
+              </li>
+              <li>
+                <strong>Automatización jurídica:</strong> Desarrollo de workflows que incrementaron productividad legal en 35%
+              </li>
+              <li>
+                <strong>Metodología ágil:</strong> Scrum con equipo multidisciplinario de 8 profesionales (developers + abogados)
+              </li>
+              <li>
+                <strong>Resolución técnica:</strong> Debugging y optimización de consultas SQL complejas en bases de datos jurídicas
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- BERNER -->
+        <div class="job">
+          <div class="job-title">Mobile Developer & IT Support Specialist</div>
+          <div class="company-info">
+            Multinacional Berner | Granada, España | Febrero 2018 - Septiembre 2018
+          </div>
+          <div class="job-description">
+            <p class="job-paragraph">
+              <strong>Desarrollo de aplicación móvil ERP empresarial</strong> y gestión del soporte técnico corporativo para más de 100 empleados. Implementación de soluciones híbridas multiplataforma y optimización de infraestructura IT.
+            </p>
+            <ul>
+              <li>
+                <strong>Desarrollo móvil híbrido:</strong> App ERP con HTML5, JavaScript, PhoneGap y SQLite para iOS/Android
+              </li>
+              <li>
+                <strong>Gestión IT corporativa:</strong> Soporte técnico N1/N2 para +100 empleados con SLA &lt; 2h respuesta
+              </li>
+              <li>
+                <strong>Optimización de infraestructura:</strong> Mejoras que redujeron tiempos de carga web corporativa en 30%
+              </li>
+              <li>
+                <strong>Mantenimiento preventivo:</strong> Monitorización y mantenimiento de servidores web y bases de datos
+              </li>
+              <li>
+                <strong>Resolución de incidencias:</strong> Troubleshooting avanzado de sistemas Windows/Linux en entorno empresarial
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Proyectos Destacados</h2>
+
+        <div class="project">
+          <div class="project-title">SaaS para Gestión de Salones de Belleza</div>
+          <div class="project-subtitle">Desarrollo Full Stack Freelance | 2023</div>
+          <div class="job-description">
+            <p class="job-paragraph">
+              <strong>Plataforma B2B completa</strong> para digitalización de salones de belleza con sistema de reservas online, gestión de clientes y analytics empresariales. Solución escalable deployada en producción con usuarios reales.
+            </p>
+            <ul>
+              <li>
+                <strong>Frontend moderno:</strong> Next.js 14, TypeScript, TailwindCSS con SSR/SSG para SEO optimizado
+              </li>
+              <li>
+                <strong>Backend robusto:</strong> Laravel 10 + API RESTful + JWT authentication + middleware de autorización
+              </li>
+              <li>
+                <strong>Base de datos:</strong> MySQL con diseño normalizado y optimización de consultas complejas
+              </li>
+              <li>
+                <strong>Features clave:</strong> Calendario interactivo, notificaciones push/email, dashboard analytics, multi-tenant
+              </li>
+              <li>
+                <strong>Resultados:</strong> +15 salones activos, 500+ reservas mensuales, 95% satisfacción usuario
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-title">Suite de Aplicaciones Web Avanzadas</div>
+          <div class="project-subtitle">Portfolio Técnico | 2023 - 2024</div>
+          <div class="job-description">
+            <p class="job-paragraph">
+              <strong>Ecosistema de aplicaciones</strong> desarrolladas para demostrar expertise técnico y explorar tecnologías emergentes. Cada proyecto implementa patrones avanzados y arquitecturas modernas.
+            </p>
+            <ul>
+              <li>
+                <strong>E-commerce Full Stack:</strong> Next.js + Stripe + PostgreSQL - Carrito, pagos, panel admin, analytics
+              </li>
+              <li>
+                <strong>Sistema de Reservas SaaS:</strong> Vue.js + Node.js + MongoDB - Multi-tenant, roles, dashboard estadísticas
+              </li>
+              <li>
+                <strong>Task Manager Colaborativo:</strong> React + Socket.io + Redis - Tiempo real, equipos, notificaciones
+              </li>
+              <li>
+                <strong>Videojuego 3D:</strong> Unity + C# - Mecánicas originales, física realista, UI/UX inmersiva
+              </li>
+              <li>
+                <strong>Trading Analytics AI:</strong> Python + TensorFlow + FastAPI - ML predictivo, backtesting automatizado
+              </li>
+              <li>
+                <strong>Arquitectura:</strong> Microservicios, Docker, CI/CD con GitHub Actions, testing automatizado
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Habilidades Técnicas</h2>
+        <div class="skills-grid">
+          <div class="skill-category">
+            <strong>Lenguajes Core (Avanzado):</strong>
+            <div class="skill-list">
+              JavaScript/TypeScript, Python, PHP, Java, C++, SQL, MQL5
+            </div>
+          </div>
+          <div class="skill-category">
+            <strong>Frontend & Mobile:</strong>
+            <div class="skill-list">
+              React/Next.js, Angular, Vue.js, React Native, Flutter, HTML5/CSS3, TailwindCSS, SASS
+            </div>
+          </div>
+          <div class="skill-category">
+            <strong>Backend & APIs:</strong>
+            <div class="skill-list">
+              Laravel, NestJS, Django, Spring Boot, Node.js/Express, API RESTful, GraphQL, Microservicios
+            </div>
+          </div>
+          <div class="skill-category">
+            <strong>Bases de Datos & Cache:</strong>
+            <div class="skill-list">
+              MySQL, PostgreSQL, MongoDB, Redis, SQLite, diseño de bases de datos, optimización de consultas
+            </div>
+          </div>
+          <div class="skill-category">
+            <strong>DevOps & Cloud:</strong>
+            <div class="skill-list">
+              Docker, Kubernetes, AWS, Azure, CI/CD (GitHub Actions), Linux, Nginx, Apache
+            </div>
+          </div>
+          <div class="skill-category">
+            <strong>Herramientas & Metodologías:</strong>
+            <div class="skill-list">
+              Git/GitHub, Jira, Scrum/Agile, TDD, code reviews, Postman, VS Code, IntelliJ
+            </div>
+          </div>
+          <div class="skill-category">
+            <strong>IA & Especialidades:</strong>
+            <div class="skill-list">
+              Machine Learning, TensorFlow, trading algorítmico, ciberseguridad, pentesting, análisis cuantitativo
+            </div>
+          </div>
+          <div class="skill-category">
+            <strong>Arquitectura & Liderazgo:</strong>
+            <div class="skill-list">
+              Patrones de diseño, arquitectura de software, gestión de equipos, mentoría técnica, roadmaps
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Educación</h2>
+
+        <div class="education-item">
+          <div class="degree">Grado en Ingeniería Informática</div>
+          <div class="institution">
+            Universidad ETSIIT, Granada, España | 2018 - 2024
+          </div>
+        </div>
+
+        <div class="education-item">
+          <div class="degree">
+            Programa Internacional Erasmus - Ingeniería Informática
+          </div>
+          <div class="institution">
+            Universidad ISTCE, Lisboa, Portugal | 2022 - 2023
+          </div>
+        </div>
+
+        <div class="education-item">
+          <div class="degree">
+            Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM)
+          </div>
+          <div class="institution">
+            CES Cristo Rey, Granada, España | 2016 - 2018
+          </div>
+        </div>
+
+        <div class="education-item">
+          <div class="degree">Bachillerato Científico-Tecnológico</div>
+          <div class="institution">
+            CES Cristo Rey, Granada, España | 2014 - 2016
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Certificaciones y Formación Especializada</h2>
+        <div class="cert-item">
+          <strong>Desarrollo Backend Avanzado con Laravel</strong> - Udemy
+          (2021)
+        </div>
+        <div class="cert-item">
+          <strong>Desarrollo Frontend Moderno con React</strong> - Udemy (2022)
+        </div>
+        <div class="cert-item">
+          <strong>Bases de Datos NoSQL y MongoDB</strong> - Formación
+          Universitaria de Máster
+        </div>
+        <div class="cert-item">
+          <strong>Ciberseguridad y Ethical Hacking</strong> - Formación
+          Universitaria de Máster
+        </div>
+        <div class="cert-item">
+          <strong>Algoritmos de Trading y Análisis Técnico</strong> - Formación
+          Autodidacta (2024)
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Competencias Adicionales</h2>
+
+        <div class="skill-category">
+          <strong>Idiomas:</strong>
+          <div class="languages">
+            • Español: Nativo<br />
+            • Inglés: B1 (Intermedio)<br />
+            • Portugués: B1 (Intermedio)
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <strong>Habilidades Interpersonales:</strong>
+          <div class="soft-skills">
+            • Resolución de problemas complejos y pensamiento analítico<br />
+            • Comunicación técnica clara y efectiva<br />
+            • Liderazgo de equipos y mentoría técnica<br />
+            • Adaptabilidad a nuevas tecnologías y metodologías<br />
+            • Gestión eficiente del tiempo y priorización de tareas<br />
+            • Atención meticulosa al detalle y calidad del código<br />
+            • Soporte técnico remoto y resolución de incidencias
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function downloadPDF() {
+        // Ocultar el botón de descarga temporalmente
+        const downloadBtn = document.querySelector(".download-btn");
+        downloadBtn.style.display = "none";
+
+        // Configurar título limpio para el PDF (sin "CV - ")
+        const originalTitle = document.title;
+        document.title = "Juan-Jose-Barrera-Linde";
+
+        // Abrir diálogo de impresión sin inyectar estilos que rastericen texto
+        setTimeout(() => {
+          window.print();
+        }, 50);
+
+        // Restaurar después de imprimir
+        setTimeout(() => {
+          downloadBtn.style.display = "block";
+          document.title = originalTitle;
+        }, 800);
+      }
+
+      // Atajos de teclado
+      document.addEventListener("keydown", function (e) {
+        // Ctrl+P para imprimir
+        if (e.ctrlKey && e.key === "p") {
+          e.preventDefault();
+          downloadPDF();
+        }
+      });
+    </script>
+  </body>
+</html>
